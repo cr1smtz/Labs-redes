@@ -1,0 +1,23 @@
+- Errores en los roles USM
+
+- Errores de formato en el nombre del archivo de entrega
+
+- Faltas graves de ortograf´ıa en el README 
+
+- No especificar las fuentes de informaci´on o bibliograf´ıa 
+
+- README: instrucciones de ejecuci´on de cada
+componente, y la documentaci´on del protocolo TCP implementado (comandos, formato de respuestas
+y c´odigos de error). 
+
+- video 30 seg
+
+- Debe asegurarse que su entrega funcione de forma remota y local
+
+- archivo comprimido .zip
+
+- estrictamente prohibido: requests, flask, fastapi,
+socketio, aiohttp
+
+- El protocolo de comandos TCP debe ser consistente: los mismos comandos deben producir siempre el
+mismo formato de respuesta. Dicho formato debe estar documentado en el README
