@@ -24,6 +24,7 @@ def recibir_mensaje(client, buffer):
                 print("Mensaje JSON inválido recibido")
                 continue
 
+
 def enviar_mensaje(client,mensaje,cmd):  
     data = {
         "cmd": cmd,
@@ -38,17 +39,7 @@ def enviar_mensaje(client,mensaje,cmd):
     except:
         print("Error enviando mensaje")
 
-def escribir_chat(client,estado):
-    while(estado["conexion"]):
-        print("Escribe algo:")
-        chat = input()
-        if(chat!="DISCONNECT"):
-            enviar_mensaje(client,chat,"MSG")
-        else:
-            enviar_mensaje(client,chat,"DISCONNECT")
 
-    if not estado["conexion"]:
-        print("Chat desconectado")        
 
 def registro():
     flag = False
@@ -75,12 +66,27 @@ def registro():
             buffer = ""
 
 
+
+def escribir_chat(client,estado):
+    while(estado["conexion"]):
+        print("Escribe algo:")
+        chat = input().strip()
+        if(chat != "DISCONNECT"):
+            enviar_mensaje(client,chat,"MSG")
+        else:
+            enviar_mensaje(client,chat,"DISCONNECT")
+
+    if not estado["conexion"]:
+        print("Chat desconectado") 
+
+      
 def usuario_escuchando(client,buffer,estado):
     while estado["conexion"]:
         mensaje,buffer = recibir_mensaje(client,buffer)
         
         if mensaje is None:
             estado["conexion"] = False
+            client.close()
             break
 
         cmd = mensaje.get('cmd')
@@ -92,7 +98,7 @@ def usuario_escuchando(client,buffer,estado):
             print("Saliste del chat")
             estado["conexion"] = False
             client.close()
-            
+            break
             
 
 

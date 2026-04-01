@@ -7,6 +7,10 @@ import http.server
 host = '127.0.0.1'
 port = 5500
 
+PORT_UDP = 6500
+
+udp_server_connect = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server.bind((host, port))
 server.listen()
@@ -181,6 +185,8 @@ def nuevo_cliente(client, address, clients, nicknames, historial, lock):
     print(f"Nickname registrado: {nickname}")
     broadcast(f"{nickname} joined!", "MSG", lock, clients)
 
+    # ACA PONER SEND A UDP
+
     # Ciclo que maneja interacciones con cliente
     while True:
 
@@ -207,6 +213,8 @@ def nuevo_cliente(client, address, clients, nicknames, historial, lock):
                     historial.append(data)
 
                 broadcast(f"{nickname}: {contenido}", "MSG", lock, clients)
+                
+                # ACÁ PONER SEND A UDP
 
             # Caso Desconexion
             elif cmd == "DISCONNECT":
@@ -220,6 +228,9 @@ def nuevo_cliente(client, address, clients, nicknames, historial, lock):
 
                 client.close()
                 broadcast(f"{nickname} abadonó el chat", "MSG", lock, clients)
+                
+                # ACÁ PONER SEND A UDP
+
                 return
 
                 
@@ -238,6 +249,8 @@ def nuevo_cliente(client, address, clients, nicknames, historial, lock):
                     
             print(f"{nick} se cayó inesperadamente")
             broadcast(f"{nick} abandonó el chat inesperadamente!", "MSG", lock, clients)
+
+            #ACÁ PONER SEND A UDP
 
             return
 
