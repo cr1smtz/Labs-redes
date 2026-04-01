@@ -10,9 +10,8 @@ port = 5500
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server.bind((host, port))
 server.listen()
+
 lock = threading.Lock()
-
-
 clients = []
 nicknames = []
 historial = []
@@ -26,17 +25,27 @@ def enviar_mensaje(client, mensaje, cmd):
         "contenido": mensaje,
         "timestamp": datetime.datetime.now().isoformat()
     }
-    with lock:
-        historial.append(data)
 
     serialized = json.dumps(data) + '\n'
 
     try:
         client.sendall(serialized.encode('utf-8'))
+
     except:
         pass
 
 
+
+
+
+"""
+recibir_mensaje(client,buffer):
+
+Dado un objeto tipo socket client que es la abstraccion a cargo de la conexion con el cliente, recibe constantemente mensajes enviados (del tipo bytes object),
+en caso de string vacio (cierre de conexion) retorna None, en caso de mensaje distinto de '', lo agrega a buffer para reconstruirlo.
+
+
+"""
 def recibir_mensaje(client,buffer):
     while True:
         data = client.recv(1024).decode('utf-8')
@@ -58,56 +67,19 @@ def recibir_mensaje(client,buffer):
                 continue
 
 
-def broadcast(mensaje, cmd):
-    for client in clients:
+
+def broadcast(mensaje, cmd, lock, clients):
+
+    copia_snapshot = []
+
+    with lock:
+        copia_snapshot = clients.copy()
+
+    for client in copia_snapshot:
         enviar_mensaje(client, mensaje, cmd)
 
 
-def handle(client, nickname, buffer):
-    while True:
-        try:
-            mensaje, buffer = recibir_mensaje(client, buffer)
-
-            if mensaje is None:
-                raise Exception("Cliente desconectado")
-
-            cmd = mensaje.get("cmd")
-            contenido = mensaje.get("contenido")
-
-            if cmd == "MSG":
-                print(f"{nickname} escribió: {contenido}")
-                broadcast(f"{nickname}: {contenido}", "MSG")
-
-            elif cmd == "DISCONNECT":
-                print(f"{nickname} se desconectó")
-                enviar_mensaje(client,"Solicitud de desconexion recibida","DISCONNECT")
-                with lock:
-                    index = clients.index(client)
-                    nick = nicknames[index]
-                    clients.remove(client)
-                    nicknames.remove(nick)
-
-                client.close()
-                broadcast(f"{nickname} abadonó el chat", "MSG")
-                break
-
-                
-
-        except:
-            if client in clients:
-                with lock:
-                    index = clients.index(client)
-                    clients.remove(client)
-                    client.close()
-                    nick = nicknames[index]
-                    nicknames.remove(nick)
-                client.close()
-
-                print(f"{nick} se cayó inesperadamente")
-                broadcast(f"{nick} abandonó el chat inesperadamente!", "MSG")
-
-            break
-
+#########################################################
 def consola_interna():
     while(True):
         print("Ingrese un comando:")
@@ -171,49 +143,122 @@ def iniciar_http():
     print("Servidor HTTP corriendo en puerto 8000")
     httpd.serve_forever()
 
-
-def receive():
-    print("Servidor corriendo")
+#########################################################
 
 
-    while True:
-        client, address = server.accept()
-        print(f"Conectado con {address}")
+def nuevo_cliente(client, address, clients, nicknames, historial, lock):
+        
+    print(f"Conectado con {address}")
 
-        buffer = ""
+    buffer = ""
 
-        # Esperar NICK
-        mensaje, buffer = recibir_mensaje(client, buffer)
+    # Esperar NICK
+    mensaje, buffer = recibir_mensaje(client, buffer)
 
-        if mensaje is None:
-            client.close()
-            continue
+    if mensaje is None:
+        client.close()
+        return
 
-        if mensaje.get("cmd") != "NICK":
-            client.close()
-            continue
+    if mensaje.get("cmd") != "NICK":
+        client.close()
+        return
 
-        nickname = mensaje.get("contenido")
+
+    nickname = mensaje.get("contenido")
+
+    with lock:
 
         # Validar nickname
         if nickname in nicknames:
             enviar_mensaje(client, "Nickname en uso", "ERROR")
             client.close()
-            continue
+            return
 
-        # Aceptar usuario
-        with lock:
-            nicknames.append(nickname)
-            clients.append(client)
+        nicknames.append(nickname)
+        clients.append(client)
+    
+    enviar_mensaje(client, "Nickname registrado", "OK")
+    print(f"Nickname registrado: {nickname}")
+    broadcast(f"{nickname} joined!", "MSG", lock, clients)
 
-        enviar_mensaje(client, "Nickname registrado", "OK")
+    # Ciclo que maneja interacciones con cliente
+    while True:
 
-        print(f"Nickname registrado: {nickname}")
-        broadcast(f"{nickname} joined!", "MSG")
+        try:
+            mensaje, buffer = recibir_mensaje(client, buffer)
 
-        # Thread del cliente
-        thread_tcp = threading.Thread(target=handle, args=(client, nickname, buffer))
-        thread_tcp.start()
+            if mensaje is None:
+                raise Exception("Cliente desconectado")
+
+
+            cmd = mensaje.get("cmd")
+            contenido = mensaje.get("contenido")
+            data = {
+                "cmd": cmd,
+                "contenido": contenido,
+                "timestamp": datetime.datetime.now().isoformat()
+            }
+
+            # Caso Mensaje
+            if cmd == "MSG":
+                print(f"{nickname} escribió: {contenido}")
+
+                with lock:
+                    historial.append(data)
+
+                broadcast(f"{nickname}: {contenido}", "MSG", lock, clients)
+
+            # Caso Desconexion
+            elif cmd == "DISCONNECT":
+                print(f"{nickname} se desconectó")
+                enviar_mensaje(client,"Solicitud de desconexion recibida","DISCONNECT")
+                with lock:
+                    index = clients.index(client)
+                    nick = nicknames[index]
+                    clients.remove(client)
+                    nicknames.remove(nick)
+
+                client.close()
+                broadcast(f"{nickname} abadonó el chat", "MSG", lock, clients)
+                return
+
+                
+        except:
+            
+            with lock:
+                if client in clients:
+
+                    index = clients.index(client)
+                    clients.remove(client)
+                    client.close()
+                    nick = nicknames[index]
+                    nicknames.remove(nick)
+
+            client.close()
+                    
+            print(f"{nick} se cayó inesperadamente")
+            broadcast(f"{nick} abandonó el chat inesperadamente!", "MSG", lock, clients)
+
+            return
+
+
+
+
+
+
+def receive(clients, nicknames, historial, lock):
+    print("Servidor corriendo")
+
+
+    while True:
+        client, address = server.accept()
+
+        thread_cliente = threading.Thread(target=nuevo_cliente, args=(client, address, clients, nicknames, historial, lock))
+        thread_cliente.start()
+
+
+ 
+
 
 
 thread_consola = threading.Thread(target=consola_interna, args=())
@@ -223,4 +268,5 @@ thread_http = threading.Thread(target=iniciar_http, args=())
 thread_http.start()
 
 
-receive()
+
+receive(clients, nicknames, historial, lock)
