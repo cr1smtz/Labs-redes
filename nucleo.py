@@ -2,6 +2,7 @@ import socket
 import threading
 import datetime
 import json
+import http.server
 
 host = '127.0.0.1'
 port = 5500
@@ -11,15 +12,13 @@ server.bind((host, port))
 server.listen()
 lock = threading.Lock()
 
+
 clients = []
 nicknames = []
 historial = []
 
 
-
-# -------------------------
-# UTILIDADES
-# -------------------------
+#TCP
 
 def enviar_mensaje(client, mensaje, cmd):
     data = {
@@ -63,9 +62,6 @@ def broadcast(mensaje, cmd):
     for client in clients:
         enviar_mensaje(client, mensaje, cmd)
 
-# -------------------------
-# MANEJO DE CLIENTE
-# -------------------------
 
 def handle(client, nickname, buffer):
     while True:
@@ -87,11 +83,13 @@ def handle(client, nickname, buffer):
                 enviar_mensaje(client,"Solicitud de desconexion recibida","DISCONNECT")
                 with lock:
                     index = clients.index(client)
-                    clients.remove(client)
                     nick = nicknames[index]
+                    clients.remove(client)
                     nicknames.remove(nick)
+
                 client.close()
                 broadcast(f"{nickname} abadonó el chat", "MSG")
+                break
 
                 
 
@@ -120,14 +118,63 @@ def consola_interna():
                     print(msg)
                     
             
-        
+#HTTP
 
-# -------------------------
-# REGISTRO + ACEPTACIÓN
-# -------------------------
+class MiHandler(http.server.BaseHTTPRequestHandler):
+    def do_GET(self):
+        if self.path == "/historial":
+            with lock:
+                data = json.dumps(historial)
+
+            body = data.encode('utf-8')
+
+            response = (
+                "HTTP/1.1 200 OK\r\n"
+                "Content-Type: application/json; charset=utf-8\r\n"
+                f"Content-Length: {len(body)}\r\n"
+                "\r\n"
+            ).encode('utf-8') + body
+
+            self.wfile.write(response)
+
+        elif self.path == "/usuarios":
+            with lock:
+                data = json.dumps(nicknames)
+
+            body = data.encode('utf-8')
+
+            response = (
+                "HTTP/1.1 200 OK\r\n"
+                "Content-Type: application/json; charset=utf-8\r\n"
+                f"Content-Length: {len(body)}\r\n"
+                "\r\n"
+            ).encode('utf-8') + body
+
+            self.wfile.write(response)
+
+        else:
+            body = b'{"error": "Not found"}'
+
+            response = (
+                "HTTP/1.1 404 Not Found\r\n"
+                "Content-Type: application/json; charset=utf-8\r\n"
+                f"Content-Length: {len(body)}\r\n"
+                "\r\n"
+            ).encode('utf-8') + body
+
+            self.wfile.write(response)
+
+
+
+def iniciar_http():
+    httpd = http.server.HTTPServer((host, 8000), MiHandler)
+    print("Servidor HTTP corriendo en puerto 8000")
+    httpd.serve_forever()
+
 
 def receive():
     print("Servidor corriendo")
+
 
     while True:
         client, address = server.accept()
@@ -165,10 +212,15 @@ def receive():
         broadcast(f"{nickname} joined!", "MSG")
 
         # Thread del cliente
-        thread = threading.Thread(target=handle, args=(client, nickname, buffer))
-        thread.start()
-        thread = threading.Thread(target=consola_interna, args=())
-        thread.start()
+        thread_tcp = threading.Thread(target=handle, args=(client, nickname, buffer))
+        thread_tcp.start()
+
+
+thread_consola = threading.Thread(target=consola_interna, args=())
+thread_consola.start()
+
+thread_http = threading.Thread(target=iniciar_http, args=())
+thread_http.start()
 
 
 receive()
