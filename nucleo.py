@@ -21,6 +21,13 @@ nicknames = []
 historial = []
 
 
+#UDP
+def mandar_logger(udp_socket, msj):
+    udp_socket.sendto(msj.encode("utf-8"), (host, PORT_UDP))
+
+
+
+
 #TCP
 
 def enviar_mensaje(client, mensaje, cmd):
@@ -186,6 +193,8 @@ def nuevo_cliente(client, address, clients, nicknames, historial, lock):
     broadcast(f"{nickname} joined!", "MSG", lock, clients)
 
     # ACA PONER SEND A UDP
+    mandar_logger(udp_server_connect, f"CONNECT usuario={nickname} ip={address[0]}")
+
 
     # Ciclo que maneja interacciones con cliente
     while True:
@@ -215,6 +224,7 @@ def nuevo_cliente(client, address, clients, nicknames, historial, lock):
                 broadcast(f"{nickname}: {contenido}", "MSG", lock, clients)
                 
                 # ACÁ PONER SEND A UDP
+                mandar_logger(udp_server_connect, f"MSG usuario={nickname} texto={contenido}")
 
             # Caso Desconexion
             elif cmd == "DISCONNECT":
@@ -230,11 +240,12 @@ def nuevo_cliente(client, address, clients, nicknames, historial, lock):
                 broadcast(f"{nickname} abadonó el chat", "MSG", lock, clients)
                 
                 # ACÁ PONER SEND A UDP
+                mandar_logger(udp_server_connect, f"DISCONNECT usuario={nickname} ip={address[0]}")
 
                 return
 
                 
-        except:
+        except Exception as e:
             
             with lock:
                 if client in clients:
@@ -251,6 +262,7 @@ def nuevo_cliente(client, address, clients, nicknames, historial, lock):
             broadcast(f"{nick} abandonó el chat inesperadamente!", "MSG", lock, clients)
 
             #ACÁ PONER SEND A UDP
+            mandar_logger(udp_server_connect, f"ERROR usuario={nickname} motivo={e}")
 
             return
 

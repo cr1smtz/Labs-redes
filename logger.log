@@ -1,0 +1,12 @@
+CONNECT usuario=NICK Baldwin ip=127.0.0.1
+MSG usuario=NICK Baldwin texto=test
+MSG usuario=NICK Baldwin texto=test1
+MSG usuario=NICK Baldwin texto=test
+MSG usuario=NICK Baldwin texto=test
+MSG usuario=NICK Baldwin texto=test
+MSG usuario=NICK Baldwin texto=test
+MSG usuario=NICK Baldwin texto=tessssss
+MSG usuario=NICK Baldwin texto=test1231231231
+MSG usuario=NICK Baldwin texto=test
+MSG usuario=NICK Baldwin texto=12313213123123123
+MSG usuario=NICK Baldwin texto=deberia estar escribiendose en el loggerfile

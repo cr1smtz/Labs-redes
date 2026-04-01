@@ -21,8 +21,9 @@ with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as server:
                 data, addr = server.recvfrom(65535)
                 print(f"IP:{addr[0]}, Contenido: {data.decode('utf-8')}")
                 file.write(data.decode('utf-8')+ "\n")
+                file.flush()
                 
             except Exception as e:
-                file.write(f"Error: {e}"+ "\n")
-
+                file.write(f"Error: {e}"+ "\n") 
+                file.flush()
 
