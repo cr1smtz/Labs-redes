@@ -10,3 +10,7 @@ MSG usuario=NICK Baldwin texto=test1231231231
 MSG usuario=NICK Baldwin texto=test
 MSG usuario=NICK Baldwin texto=12313213123123123
 MSG usuario=NICK Baldwin texto=deberia estar escribiendose en el loggerfile
+2026-04-02T12:27:31.570611 CONNECT usuario=NICK baldwin ip=127.0.0.1
+2026-04-02T12:27:52.832375 DISCONNECT usuario=NICK baldwin ip=127.0.0.1
+2026-04-02T12:28:50.108976 CONNECT usuario=NICK Baldwin ip=127.0.0.1
+2026-04-02T12:28:59.222961 ERROR usuario=NICK Baldwin motivo=Cliente desconectado

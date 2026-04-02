@@ -192,8 +192,10 @@ def nuevo_cliente(client, address, clients, nicknames, historial, lock):
     print(f"Nickname registrado: {nickname}")
     broadcast(f"{nickname} joined!", "MSG", lock, clients)
 
+    timestamp = datetime.datetime.now().isoformat() 
+
     # ACA PONER SEND A UDP
-    mandar_logger(udp_server_connect, f"CONNECT usuario={nickname} ip={address[0]}")
+    mandar_logger(udp_server_connect, f"{timestamp} CONNECT usuario={nickname} ip={address[0]}")
 
 
     # Ciclo que maneja interacciones con cliente
@@ -223,8 +225,9 @@ def nuevo_cliente(client, address, clients, nicknames, historial, lock):
 
                 broadcast(f"{nickname}: {contenido}", "MSG", lock, clients)
                 
+                timestamp = datetime.datetime.now().isoformat() 
                 # ACÁ PONER SEND A UDP
-                mandar_logger(udp_server_connect, f"MSG usuario={nickname} texto={contenido}")
+                mandar_logger(udp_server_connect, f"{timestamp} MSG usuario={nickname} texto={contenido}")
 
             # Caso Desconexion
             elif cmd == "DISCONNECT":
@@ -239,8 +242,9 @@ def nuevo_cliente(client, address, clients, nicknames, historial, lock):
                 client.close()
                 broadcast(f"{nickname} abadonó el chat", "MSG", lock, clients)
                 
+                timestamp = datetime.datetime.now().isoformat() 
                 # ACÁ PONER SEND A UDP
-                mandar_logger(udp_server_connect, f"DISCONNECT usuario={nickname} ip={address[0]}")
+                mandar_logger(udp_server_connect, f"{timestamp} DISCONNECT usuario={nickname} ip={address[0]}")
 
                 return
 
@@ -261,8 +265,9 @@ def nuevo_cliente(client, address, clients, nicknames, historial, lock):
             print(f"{nick} se cayó inesperadamente")
             broadcast(f"{nick} abandonó el chat inesperadamente!", "MSG", lock, clients)
 
+            timestamp = datetime.datetime.now().isoformat() 
             #ACÁ PONER SEND A UDP
-            mandar_logger(udp_server_connect, f"ERROR usuario={nickname} motivo={e}")
+            mandar_logger(udp_server_connect, f"{timestamp} ERROR usuario={nickname} motivo={e}")
 
             return
 
