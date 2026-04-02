@@ -1,1 +1,4 @@
 
+2026-04-02T12:52:55.086212 CONNECT usuario=baldwin ip=127.0.0.1
+2026-04-02T13:16:30.589625 CONNECT usuario=baldwin ip=127.0.0.1
+2026-04-02T13:16:46.156653 MSG usuario=baldwin texto=test

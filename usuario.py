@@ -49,9 +49,16 @@ def registro():
         client.connect(('127.0.0.1', 5500))
         print("Ingrese su comando de creacion de usuario:")
         entrada = input()
-        nombre = entrada.strip().split()[1]
-        comando = entrada.strip().split()[0]
-        enviar_mensaje(client,nombre,comando)
+        entrada_test = entrada.strip().split()
+        if len(entrada_test) < 2:
+            print("Ingrese el comando NICK delante de su nombre de usuario deseado, intente denuevo")
+            continue
+        
+        else: 
+            nombre = entrada.strip().split()[1]
+            comando = entrada.strip().split()[0]
+            enviar_mensaje(client,nombre,comando)
+        
         respuesta,buffer = recibir_mensaje(client,buffer)
 
         if(respuesta is None):
