@@ -53,7 +53,7 @@ def registro():
         if len(entrada_test) < 2:
             print("Ingrese el comando NICK delante de su nombre de usuario deseado, intente denuevo")
             continue
-        
+
         else: 
             nombre = entrada.strip().split()[1]
             comando = entrada.strip().split()[0]
@@ -88,6 +88,7 @@ def escribir_chat(client,estado):
                 continue
         else:
             enviar_mensaje(client,chat,"DISCONNECT")
+            break
 
     if not estado["conexion"]:
         print("Chat desconectado") 
@@ -113,8 +114,6 @@ def usuario_escuchando(client,buffer,estado):
             client.close()
             break
             
-            
-
 
 
 estado = {"conexion": False}

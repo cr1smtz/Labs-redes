@@ -2,3 +2,17 @@
 2026-04-02T12:52:55.086212 CONNECT usuario=baldwin ip=127.0.0.1
 2026-04-02T13:16:30.589625 CONNECT usuario=baldwin ip=127.0.0.1
 2026-04-02T13:16:46.156653 MSG usuario=baldwin texto=test
+2026-04-02T14:16:19.509125 CONNECT usuario=cristobal ip=127.0.0.1
+2026-04-02T14:17:09.132192 CONNECT usuario=jorge ip=127.0.0.1
+2026-04-02T14:19:53.890794 ERROR usuario=baldwin motivo=Cliente desconectado
+2026-04-02T14:24:23.372856 CONNECT usuario=cristobal ip=127.0.0.1
+2026-04-02T14:24:59.511365 CONNECT usuario=jorge ip=127.0.0.1
+2026-04-02T14:25:34.044324 MSG usuario=cristobal texto=hola
+2026-04-02T14:25:55.329645 DISCONNECT usuario=cristobal ip=127.0.0.1
+2026-04-02T14:27:46.129622 CONNECT usuario=Baldwin ip=127.0.0.1
+2026-04-02T14:28:01.888608 MSG usuario=Baldwin texto=Hola soy Baldwin
+2026-04-02T14:33:02.039529 ERROR usuario=Baldwin motivo=Cliente desconectado
+2026-04-02T14:56:02.889184 CONNECT usuario=BALDWIN ip=127.0.0.1
+2026-04-02T14:56:08.021468 DISCONNECT usuario=BALDWIN ip=127.0.0.1
+2026-04-02T15:02:30.835298 CONNECT usuario=baldwin ip=127.0.0.1
+2026-04-02T15:02:34.667616 DISCONNECT usuario=baldwin ip=127.0.0.1
