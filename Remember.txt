@@ -29,6 +29,10 @@ mismo formato de respuesta. Dicho formato debe estar documentado en el README
 
 
 
+ngrok tcp 5500
+ngrok http 8000
+
+
 
 
 https://oneuptime.com/blog/post/2026-03-20-udp-server-client-python-ipv4/view
