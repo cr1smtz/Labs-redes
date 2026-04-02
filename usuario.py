@@ -18,7 +18,7 @@ def recibir_mensaje(client, buffer):
 
             try:
                 parsed = json.loads(raw_msg)
-                print(parsed)
+                #print(parsed)
                 return parsed, buffer
             except json.JSONDecodeError:
                 print("Mensaje JSON inválido recibido")
@@ -47,9 +47,11 @@ def registro():
         buffer = ""
         client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         client.connect(('127.0.0.1', 5500))
-        print("Ingrese su nombre de usuario:")
-        nombre = input()
-        enviar_mensaje(client,nombre,"NICK")
+        print("Ingrese su comando de creacion de usuario:")
+        entrada = input()
+        nombre = entrada.strip().split()[1]
+        comando = entrada.strip().split()[0]
+        enviar_mensaje(client,nombre,comando)
         respuesta,buffer = recibir_mensaje(client,buffer)
 
         if(respuesta is None):
@@ -72,7 +74,11 @@ def escribir_chat(client,estado):
         print("Escribe algo:")
         chat = input().strip()
         if(chat != "DISCONNECT"):
-            enviar_mensaje(client,chat,"MSG")
+            if ("MSG" in chat):
+                enviar_mensaje(client,chat.strip().split(" ", 1)[1],"MSG")
+            else:
+                print("Para mandar un mensaje a la sala use el comando MSG")
+                continue
         else:
             enviar_mensaje(client,chat,"DISCONNECT")
 
@@ -99,6 +105,7 @@ def usuario_escuchando(client,buffer,estado):
             estado["conexion"] = False
             client.close()
             break
+            
             
 
 

@@ -13,7 +13,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as server:
     server.bind((HOST, PORT))
     print(f"server UDP en {HOST}:{PORT}")
 
-    with open("logger.log", "a") as file:
+    with open("chat.log", "a") as file:
 
         while True:
 

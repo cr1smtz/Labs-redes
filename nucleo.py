@@ -71,9 +71,8 @@ def recibir_mensaje(client,buffer):
 
             try:
                 parsed = json.loads(raw_msg)
-                with lock:
-                    historial.append(parsed)
                 return parsed, buffer
+            
             except json.JSONDecodeError:
                 continue
 
@@ -190,7 +189,18 @@ def nuevo_cliente(client, address, clients, nicknames, historial, lock):
     
     enviar_mensaje(client, "Nickname registrado", "OK")
     print(f"Nickname registrado: {nickname}")
-    broadcast(f"{nickname} joined!", "MSG", lock, clients)
+    broadcast(f"{nickname} se conectó!", "MSG", lock, clients)
+
+    cmd = mensaje.get("cmd")
+    contenido = mensaje.get("contenido")
+    data = {
+        "cmd": cmd,
+        "contenido": contenido,
+        "timestamp": datetime.datetime.now().isoformat()
+    }
+
+    with lock:
+        historial.append(data)  
 
     timestamp = datetime.datetime.now().isoformat() 
 
@@ -240,6 +250,11 @@ def nuevo_cliente(client, address, clients, nicknames, historial, lock):
                     nicknames.remove(nick)
 
                 client.close()
+
+                data["contenido"] = nickname
+                with lock:
+                    historial.append(data)
+
                 broadcast(f"{nickname} abadonó el chat", "MSG", lock, clients)
                 
                 timestamp = datetime.datetime.now().isoformat() 
@@ -263,6 +278,15 @@ def nuevo_cliente(client, address, clients, nicknames, historial, lock):
             client.close()
                     
             print(f"{nick} se cayó inesperadamente")
+
+            data["cmd"] = "ERROR"
+            data["contenido"] = f"{nick} abandonó el chat inesperadamente!"
+            data["timestamp"] = datetime.datetime.now().isoformat()
+
+            with lock:
+                historial.append(data)
+
+
             broadcast(f"{nick} abandonó el chat inesperadamente!", "MSG", lock, clients)
 
             timestamp = datetime.datetime.now().isoformat() 
