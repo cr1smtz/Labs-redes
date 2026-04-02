@@ -1,0 +1,133 @@
+
+import socket
+import threading
+import datetime
+import json
+
+def recibir_mensaje(client, buffer):
+    while True:
+        data = client.recv(1024).decode('utf-8')
+
+        if not data:
+            return None, buffer  # conexión cerrada
+
+        buffer += data
+
+        while '\n' in buffer:
+            raw_msg, buffer = buffer.split('\n', 1)
+
+            try:
+                parsed = json.loads(raw_msg)
+                #print(parsed)
+                return parsed, buffer
+            except json.JSONDecodeError:
+                print("Mensaje JSON inválido recibido")
+                continue
+
+
+def enviar_mensaje(client,mensaje,cmd):  
+    data = {
+        "cmd": cmd,
+        "contenido": mensaje,
+        "timestamp": datetime.datetime.now().isoformat()
+    }
+
+    serialized = json.dumps(data) + '\n'
+
+    try:
+        client.sendall(serialized.encode('utf-8'))
+    except:
+        print("Error enviando mensaje")
+
+
+
+def registro():
+    flag = False
+    while not(flag):
+        buffer = ""
+        client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        client.connect(('0.tcp.sa.ngrok.io', 10827))
+        print("Ingrese su comando de creacion de usuario:")
+        entrada = input()
+        entrada_test = entrada.strip().split()
+        if len(entrada_test) < 2:
+            print("Ingrese el comando NICK delante de su nombre de usuario deseado, intente denuevo")
+            continue
+
+        else: 
+            nombre = entrada.strip().split()[1]
+            comando = entrada.strip().split()[0]
+            enviar_mensaje(client,nombre,comando)
+        
+        respuesta,buffer = recibir_mensaje(client,buffer)
+
+        if(respuesta is None):
+            print("Servidor cerró la conexión")
+            client.close()
+            continue    
+        elif(respuesta.get("cmd")=="OK"):
+            print("Usuario registrado correctamente")
+            estado["conexion"] = True
+            return client,buffer
+        else:
+            print("Error, nombre de Usuario ocupado, intente nuevamente")
+            client.close()
+            buffer = ""
+
+
+
+def escribir_chat(client,estado):
+    while(estado["conexion"]):
+        print("Escribe algo:")
+        chat = input().strip()
+        if(chat != "DISCONNECT"):
+            if ("MSG" in chat):
+                enviar_mensaje(client,chat.strip().split(" ", 1)[1],"MSG")
+            else:
+                print("Para mandar un mensaje a la sala use el comando MSG")
+                continue
+        else:
+            enviar_mensaje(client,chat,"DISCONNECT")
+            break
+
+    if not estado["conexion"]:
+        print("Chat desconectado") 
+
+      
+def usuario_escuchando(client,buffer,estado):
+    while estado["conexion"]:
+        mensaje,buffer = recibir_mensaje(client,buffer)
+        
+        if mensaje is None:
+            estado["conexion"] = False
+            client.close()
+            break
+
+        cmd = mensaje.get('cmd')
+
+        if cmd == "MSG":
+            print(mensaje.get('contenido'))
+        
+        elif cmd == "SYST":
+            print(mensaje.get('contenido'))
+
+        elif cmd == "DISCONNECT":
+            print("Saliste del chat")
+            estado["conexion"] = False
+            client.close()
+            break
+            
+
+
+estado = {"conexion": False}
+    
+client,buffer = registro()
+
+listen_thread = threading.Thread(target=usuario_escuchando, args=(client,buffer,estado))
+listen_thread.start()
+
+write_thread = threading.Thread(target=escribir_chat, args=(client,estado))
+write_thread.start()
+
+ 
+
