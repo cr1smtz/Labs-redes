@@ -23,6 +23,8 @@ socketio, aiohttp
 mismo formato de respuesta. Dicho formato debe estar documentado en el README
 
 
+-• Todas las conexiones inactivas o cerradas deben liberarse oportunamente.
+
 
 
 
