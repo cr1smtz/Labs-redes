@@ -134,6 +134,8 @@ class MiHandler(http.server.BaseHTTPRequestHandler):
 
             self.wfile.write(response)
 
+        
+
         else:
             body = b'{"error": "Not found"}'
 
@@ -189,7 +191,8 @@ def nuevo_cliente(client, address, clients, nicknames, historial, lock):
     
     enviar_mensaje(client, "Nickname registrado", "OK")
     print(f"Nickname registrado: {nickname}")
-    broadcast(f"{nickname} se conectó!", "MSG", lock, clients)
+
+    broadcast(f"{nickname} se conectó!", "SYST", lock, clients)
 
     cmd = mensaje.get("cmd")
     contenido = mensaje.get("contenido")
@@ -255,7 +258,7 @@ def nuevo_cliente(client, address, clients, nicknames, historial, lock):
                 with lock:
                     historial.append(data)
 
-                broadcast(f"{nickname} abadonó el chat", "MSG", lock, clients)
+                broadcast(f"{nickname} abadonó el chat", "SYST", lock, clients)
                 
                 timestamp = datetime.datetime.now().isoformat() 
                 # ACÁ PONER SEND A UDP
@@ -287,7 +290,7 @@ def nuevo_cliente(client, address, clients, nicknames, historial, lock):
                 historial.append(data)
 
 
-            broadcast(f"{nick} abandonó el chat inesperadamente!", "MSG", lock, clients)
+            broadcast(f"{nick} abandonó el chat inesperadamente!", "SYST", lock, clients)
 
             timestamp = datetime.datetime.now().isoformat() 
             #ACÁ PONER SEND A UDP

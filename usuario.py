@@ -107,6 +107,9 @@ def usuario_escuchando(client,buffer,estado):
 
         if cmd == "MSG":
             print(mensaje.get('contenido'))
+        
+        elif cmd == "SYST":
+            print(mensaje.get('contenido'))
 
         elif cmd == "DISCONNECT":
             print("Saliste del chat")
