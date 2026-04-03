@@ -29,3 +29,55 @@
 2026-04-02T18:39:49.507934 MSG usuario=baldwin texto=test
 2026-04-02T18:41:16.632088 DISCONNECT usuario=baldwin ip=127.0.0.1
 2026-04-02T18:42:30.530800 DISCONNECT usuario=vicho ip=127.0.0.1
+2026-04-02T19:58:38.411443 CONNECT usuario=cristobal ip=127.0.0.1
+2026-04-02T20:03:38.516635 ERROR usuario=cristobal motivo=Cliente desconectado
+2026-04-02T20:42:13.666719 CONNECT usuario=cris ip=127.0.0.1
+2026-04-02T20:43:33.270575 MSG usuario=cris texto=holaaa
+2026-04-02T20:46:32.957834 CONNECT usuario=Baldwin ip=127.0.0.1
+2026-04-02T20:46:41.284128 MSG usuario=Baldwin texto=Test
+2026-04-02T20:47:10.575747 MSG usuario=cris texto=hola
+2026-04-02T20:47:23.265700 MSG usuario=cris texto=hola como estas
+2026-04-02T20:48:51.819148 ERROR usuario=Baldwin motivo=Cliente desconectado
+2026-04-02T20:50:14.383461 MSG usuario=cris texto=hola baldwin
+2026-04-02T20:50:54.887681 CONNECT usuario=baldwin ip=127.0.0.1
+2026-04-02T20:51:11.425930 MSG usuario=baldwin texto=test
+2026-04-02T20:51:23.012541 MSG usuario=baldwin texto=test2
+2026-04-02T20:51:37.851064 MSG usuario=baldwin texto=test3
+2026-04-02T20:54:21.855637 CONNECT usuario=valdwin ip=127.0.0.1
+2026-04-02T20:54:33.096808 MSG usuario=valdwin texto=test 1
+2026-04-02T20:54:46.336047 MSG usuario=valdwin texto=test2
+2026-04-02T20:56:16.841247 MSG usuario=valdwin texto=test auto
+2026-04-02T21:02:52.246971 CONNECT usuario=cris ip=127.0.0.1
+2026-04-02T21:02:59.516982 CONNECT usuario=Baldwin ip=127.0.0.1
+2026-04-02T21:03:14.156231 MSG usuario=Baldwin texto=test
+2026-04-02T21:03:20.115418 MSG usuario=Baldwin texto=delay1
+2026-04-02T21:03:28.419106 MSG usuario=Baldwin texto=delay2
+2026-04-02T21:08:28.475343 ERROR usuario=cris motivo=Cliente desconectado
+2026-04-02T21:16:42.717100 CONNECT usuario=baldwin ip=127.0.0.1
+2026-04-02T21:16:47.461202 CONNECT usuario=cris ip=127.0.0.1
+2026-04-02T21:16:52.091002 MSG usuario=baldwin texto=test
+2026-04-02T21:16:57.092462 MSG usuario=baldwin texto=test1
+2026-04-02T21:17:02.943284 MSG usuario=baldwin texto=test2
+2026-04-02T21:22:03.048859 ERROR usuario=cris motivo=Cliente desconectado
+2026-04-02T21:23:03.884256 CONNECT usuario=jorge ip=127.0.0.1
+2026-04-02T21:23:18.577933 MSG usuario=jorge texto=hola
+2026-04-02T21:23:31.623003 MSG usuario=baldwin texto=test 0
+2026-04-02T21:24:49.475215 ERROR usuario=jorge motivo=Cliente desconectado
+2026-04-02T21:30:54.700014 CONNECT usuario=baldwin ip=127.0.0.1
+2026-04-02T21:31:03.487751 MSG usuario=baldwin texto=test
+2026-04-02T21:31:11.374058 MSG usuario=baldwin texto=test
+2026-04-02T21:32:35.841316 CONNECT usuario=cris ip=127.0.0.1
+2026-04-02T21:32:44.850002 MSG usuario=cris texto=HOLA
+2026-04-02T21:35:59.756906 ERROR usuario=baldwin motivo=Cliente desconectado
+2026-04-02T21:37:15.442018 CONNECT usuario=baldwin ip=127.0.0.1
+2026-04-02T21:37:36.189858 CONNECT usuario=cris ip=127.0.0.1
+2026-04-02T21:37:47.707770 MSG usuario=cris texto=hola
+2026-04-02T21:42:47.813557 ERROR usuario=cris motivo=Cliente desconectado
+2026-04-02T21:43:20.830134 ERROR usuario=baldwin motivo=Cliente desconectado
+2026-04-02T21:43:39.095340 CONNECT usuario=balddwin ip=127.0.0.1
+2026-04-02T21:43:59.119980 CONNECT usuario=cris ip=127.0.0.1
+2026-04-02T21:44:05.705921 MSG usuario=balddwin texto=test
+2026-04-02T21:44:11.598900 MSG usuario=balddwin texto=test
+2026-04-02T21:44:22.397737 MSG usuario=cris texto=holaaaaa
+2026-04-02T21:44:43.001455 MSG usuario=balddwin texto=asdasdasd
+2026-04-02T21:48:42.710172 ERROR usuario=cris motivo=Cliente desconectado

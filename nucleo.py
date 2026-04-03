@@ -31,6 +31,9 @@ def mandar_logger(udp_socket, msj):
 #TCP
 
 def enviar_mensaje(client, mensaje, cmd):
+    
+    client.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
+
     data = {
         "cmd": cmd,
         "contenido": mensaje,
@@ -41,6 +44,7 @@ def enviar_mensaje(client, mensaje, cmd):
 
     try:
         client.sendall(serialized.encode('utf-8'))
+
 
     except:
         pass
@@ -58,6 +62,7 @@ en caso de string vacio (cierre de conexion) retorna None, en caso de mensaje di
 
 """
 def recibir_mensaje(client,buffer):
+
     while True:
         data = client.recv(1024).decode('utf-8')
 
@@ -86,6 +91,7 @@ def broadcast(mensaje, cmd, lock, clients):
         copia_snapshot = clients.copy()
 
     for client in copia_snapshot:
+
         enviar_mensaje(client, mensaje, cmd)
 
 
@@ -309,6 +315,8 @@ def receive(clients, nicknames, historial, lock):
 
     while True:
         client, address = server.accept()
+
+        client.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
 
         thread_cliente = threading.Thread(target=nuevo_cliente, args=(client, address, clients, nicknames, historial, lock))
         thread_cliente.start()
